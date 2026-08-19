@@ -1,0 +1,17 @@
+# Go build and test artifacts
+/bin/
+/dist/
+*.test
+coverage.out
+coverage.html
+
+# Local development files
+go.work
+go.work.sum
+.env
+.env.*
+
+# Editor and operating-system files
+.DS_Store
+.vscode/
+.idea/

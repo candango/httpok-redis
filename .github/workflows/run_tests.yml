@@ -1,0 +1,30 @@
+name: Run httpok-redis tests
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.25", "1.26"]
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Install dependencies
+        run: go mod download
+      - name: Verify dependencies
+        run: go mod verify
+      - name: Run go unit tests
+        run: go test ./...
+      - name: Run go vet
+        run: go vet ./...
+      - name: Run race tests
+        run: go test -race ./...
