@@ -18,7 +18,13 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
-      - name: Install dependencies
+      - name: Install PHP Redis extension
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes php-cli php-redis
+      - name: Validate PHP fixture
+        run: php -l testdata/php_session.php
+      - name: Install Go dependencies
         run: go mod download
       - name: Verify dependencies
         run: go mod verify

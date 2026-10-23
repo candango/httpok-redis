@@ -44,6 +44,17 @@ The PHP and Go applications must agree on the TTL. The cookie is the opaque
 without changing the JSON payload. Redis owns expiration, so `RequiresPurge`
 returns false.
 
+For shared PHP sessions, configure the Go engine with the same cookie name and
+leave `CookieSecret` empty because the shared `PHPSESSID` is an opaque bearer
+ID. Configure the Redis adapter with `WithPHPCompatibility(ttl)` and use the
+same TTL in PHP's session handler. Cookie transport attributes must also match
+between applications, especially `Path`, `Domain`, `Secure`, and `SameSite`.
+
+The PHP integration test uses a generic `SessionHandlerInterface` fixture and a
+TCP miniredis server. It verifies PHP-to-Go and Go-to-PHP JSON round trips,
+TTL assignment, and deletion without depending on an application-specific
+codebase.
+
 ## Store contract and tests
 
 The adapter implements the complete `session.Store` surface: lifecycle,
@@ -60,6 +71,7 @@ in `example_test.go` verifies PHP-compatible session sharing through
 `session.StoreEngine`.
 
 ```bash
+php -l testdata/php_session.php
 go test ./...
 go vet ./...
 go test -race ./...
